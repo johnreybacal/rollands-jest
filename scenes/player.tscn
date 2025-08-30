@@ -1,7 +1,8 @@
-[gd_scene load_steps=44 format=3 uid="uid://dxktax46omecp"]
+[gd_scene load_steps=45 format=3 uid="uid://dxktax46omecp"]
 
 [ext_resource type="Texture2D" uid="uid://ccha8fwixh2la" path="res://assets/sprites/knight.png" id="1_3vyb7"]
 [ext_resource type="Script" uid="uid://bwkq263wq0ix7" path="res://scripts/player.gd" id="1_g2els"]
+[ext_resource type="PackedScene" uid="uid://cdyohpki03rl8" path="res://scenes/creature.tscn" id="2_qlg0r"]
 [ext_resource type="AudioStream" uid="uid://3x1ta5duqd0e" path="res://assets/sounds/hurt.wav" id="3_qhqgy"]
 [ext_resource type="AudioStream" uid="uid://oqjjwbr2knn3" path="res://assets/sounds/jump.wav" id="4_dqkch"]
 
@@ -304,6 +305,12 @@ radius = 5.0
 z_index = 5
 collision_layer = 2
 script = ExtResource("1_g2els")
+speed = 100.0
+jump_velocity = -275.0
+roll_speed = 150.0
+
+[node name="Creature" parent="." instance=ExtResource("2_qlg0r")]
+max_hp = 3
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, -12)
@@ -330,18 +337,13 @@ bus = &"SFX"
 
 [node name="Timers" type="Node" parent="."]
 
-[node name="DeathTimer" type="Timer" parent="Timers"]
-wait_time = 0.75
-one_shot = true
-
 [node name="KnockbackTimer" type="Timer" parent="Timers"]
 wait_time = 0.5
 one_shot = true
 
 [node name="BlinkTimer" type="Timer" parent="Timers"]
-wait_time = 0.1
+wait_time = 0.05
 
 [connection signal="frame_changed" from="AnimatedSprite2D" to="." method="_on_animated_sprite_2d_frame_changed"]
-[connection signal="timeout" from="Timers/DeathTimer" to="." method="_on_death_timer_timeout"]
 [connection signal="timeout" from="Timers/KnockbackTimer" to="." method="_on_knockback_timer_timeout"]
 [connection signal="timeout" from="Timers/BlinkTimer" to="." method="_on_blink_timer_timeout"]

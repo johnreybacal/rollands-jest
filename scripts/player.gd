@@ -4,27 +4,31 @@ class_name Player
 @export var speed = 130.0
 @export var jump_velocity = -300.0
 @export var roll_speed = 200.0
-@export var max_hp = 3
 
-var hp = max_hp
 var facing_direction = 1
 var is_knocked_back = false
 var will_roll = false
 var is_rolling = false
 
+@onready var creature: Creature = $Creature
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var hurt_sound: AudioStreamPlayer2D = $Sounds/HurtSound
 @onready var jump_sound: AudioStreamPlayer2D = $Sounds/JumpSound
-@onready var death_timer: Timer = $Timers/DeathTimer
 @onready var knockback_timer: Timer = $Timers/KnockbackTimer
 @onready var blink_timer: Timer = $Timers/BlinkTimer
+
+func _ready() -> void:
+	creature.connect("took_damage", Callable(self, "took_damage"))
+	creature.connect("knockback", Callable(self, "knockback"))
+	creature.connect("died", Callable(self, "died"))
+	creature.connect("death_timer_timeout", Callable(self, "game_over"))
 
 func _physics_process(delta: float) -> void:
 	# Add the gravity.
 	if not is_on_floor():
 		velocity += get_gravity() * delta
 
-	if hp > 0 and not is_knocked_back:
+	if creature.is_alive() and not is_knocked_back:
 		# Handle jump.
 		if Input.is_action_just_pressed("jump") and is_on_floor() and not will_roll and not is_rolling:
 			jump()
@@ -60,7 +64,7 @@ func roll() -> void:
 
 
 func play_animation() -> void:
-	if hp > 0 and not is_rolling and not will_roll:
+	if creature.is_alive() and not is_rolling and not will_roll:
 		if animated_sprite.animation == "hurt" and animated_sprite.is_playing():
 			return
 		var direction = velocity.x
@@ -74,31 +78,29 @@ func play_animation() -> void:
 		else:
 			animated_sprite.play("jump")
 
-func take_damage(amount: int, source_x: float) -> void:
-	if is_rolling:
-		return
-	hp -= amount
+func took_damage(_amount: int) -> void:
 	hurt_sound.pitch_scale = randf_range(0.8, 1.2)
 	hurt_sound.play()
-	if hp <= 0:
-		die()
-	else:
-		is_knocked_back = true
-		knockback_timer.start()
-		blink_timer.start()
-		if position.x < source_x:
-			velocity.x = -100
-		else:
-			velocity.x = 100
-		velocity.y = -150
-		animated_sprite.play("hurt")
+	creature.is_invulnerable = true
 
-func die() -> void:
-	hp = 0
+func knockback(source_x: float) -> void:
+	is_knocked_back = true
+	knockback_timer.start()
+	blink_timer.start()
+	if position.x < source_x:
+		velocity.x = -100
+	else:
+		velocity.x = 100
+	velocity.y = -150
+
+func died() -> void:
 	velocity.x = 0
 	animated_sprite.play("die")
 	Engine.time_scale = 0.5
-	death_timer.start()
+
+func game_over() -> void:
+	Engine.time_scale = 1
+	get_tree().reload_current_scene()
 
 # Animated Sprite
 func _on_animated_sprite_2d_frame_changed() -> void:
@@ -107,18 +109,17 @@ func _on_animated_sprite_2d_frame_changed() -> void:
 	if animated_sprite.animation == "roll" and animated_sprite.frame == 2:
 		will_roll = false
 		is_rolling = true
+		creature.is_invulnerable = true
 	if animated_sprite.animation == "roll" and animated_sprite.frame == 6:
 		is_rolling = false
+		creature.is_invulnerable = false
 
 # Timers
-func _on_death_timer_timeout() -> void:
-	Engine.time_scale = 1
-	get_tree().reload_current_scene()
-
 func _on_knockback_timer_timeout() -> void:
 	is_knocked_back = false
 	animated_sprite.modulate.a = 1.0
 	blink_timer.stop()
+	creature.is_invulnerable = false
 
 func _on_blink_timer_timeout() -> void:
 	if animated_sprite.modulate.a == 1.0:

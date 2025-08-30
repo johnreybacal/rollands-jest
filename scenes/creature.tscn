@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3 uid="uid://cdyohpki03rl8"]
+
+[ext_resource type="Script" uid="uid://bky6xegc0fsfa" path="res://scripts/creature.gd" id="1_upmfi"]
+
+[node name="Creature" type="Node2D"]
+script = ExtResource("1_upmfi")
+
+[node name="DeathTimer" type="Timer" parent="."]
+one_shot = true
+
+[connection signal="timeout" from="DeathTimer" to="." method="_on_death_timer_timeout"]
