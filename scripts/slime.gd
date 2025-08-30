@@ -10,6 +10,7 @@ var is_moving = true
 @onready var ray_cast_right: RayCast2D = $RayCastRight
 @onready var ray_cast_left: RayCast2D = $RayCastLeft
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
+@onready var danger_zone: DangerZone = $DangerZone
 
 func _ready() -> void:
     creature.connect("took_damage", Callable(self, "took_damage"))
@@ -32,6 +33,7 @@ func took_damage(_amount: int) -> void:
     is_moving = false
 
 func died() -> void:
+    danger_zone.queue_free()
     animated_sprite.play("die")
 
 func _on_death_timer_timeout() -> void:

@@ -12,7 +12,6 @@ var is_rolling = false
 
 @onready var creature: Creature = $Creature
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
-@onready var hurt_sound: AudioStreamPlayer2D = $Sounds/HurtSound
 @onready var jump_sound: AudioStreamPlayer2D = $Sounds/JumpSound
 @onready var knockback_timer: Timer = $Timers/KnockbackTimer
 @onready var blink_timer: Timer = $Timers/BlinkTimer
@@ -81,8 +80,6 @@ func play_animation() -> void:
             animated_sprite.play("jump")
 
 func took_damage(_amount: int) -> void:
-    hurt_sound.pitch_scale = randf_range(0.8, 1.2)
-    hurt_sound.play()
     creature.is_invulnerable = true
 
 func knockback(source_x: float) -> void:

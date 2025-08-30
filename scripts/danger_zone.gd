@@ -9,8 +9,6 @@ var target_group
 
 func _ready() -> void:
     current_group = get_groups()[0]
-
-    print("initialize dangerzone ", current_group)
     
     if current_group.contains("player"):
         target_group = "enemies"
@@ -18,17 +16,14 @@ func _ready() -> void:
         target_group = "player"
 
 func _on_body_entered(body: Node2D) -> void:
-    if body.is_in_group(target_group):
-        var creature = body.get_node("Creature") as Creature
-        if kill:
-            creature.kill()
-        else:
-            creature.take_damage(damage, global_position.x)
-
+    on_collision(body)
 
 func _on_area_entered(area: Area2D) -> void:
-    if area.is_in_group(target_group):
-        var creature = area.get_node("Creature") as Creature
+    on_collision(area)
+
+func on_collision(body: Node2D) -> void:
+    if body.is_in_group(target_group):
+        var creature = body.get_node("Creature") as Creature
         if kill:
             creature.kill()
         else:

@@ -1,11 +1,16 @@
-[gd_scene load_steps=2 format=3 uid="uid://cdyohpki03rl8"]
+[gd_scene load_steps=3 format=3 uid="uid://cdyohpki03rl8"]
 
 [ext_resource type="Script" uid="uid://bky6xegc0fsfa" path="res://scripts/creature.gd" id="1_upmfi"]
+[ext_resource type="AudioStream" uid="uid://3x1ta5duqd0e" path="res://assets/sounds/hurt.wav" id="2_bvms0"]
 
 [node name="Creature" type="Node2D"]
 script = ExtResource("1_upmfi")
+hurt_sound_stream = ExtResource("2_bvms0")
 
 [node name="DeathTimer" type="Timer" parent="."]
 one_shot = true
+
+[node name="HurtSound" type="AudioStreamPlayer2D" parent="."]
+bus = &"SFX"
 
 [connection signal="timeout" from="DeathTimer" to="." method="_on_death_timer_timeout"]
