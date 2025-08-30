@@ -80,6 +80,7 @@ func play_animation() -> void:
             animated_sprite.play("jump")
 
 func took_damage(_amount: int) -> void:
+    animated_sprite.play("hurt")
     creature.is_invulnerable = true
 
 func knockback(source_x: float) -> void:
