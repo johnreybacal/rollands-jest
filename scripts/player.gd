@@ -16,113 +16,117 @@ var is_rolling = false
 @onready var jump_sound: AudioStreamPlayer2D = $Sounds/JumpSound
 @onready var knockback_timer: Timer = $Timers/KnockbackTimer
 @onready var blink_timer: Timer = $Timers/BlinkTimer
+@onready var attack_zone: CollisionShape2D = $DangerZone/CollisionShape2D
 
 func _ready() -> void:
-	creature.connect("took_damage", Callable(self, "took_damage"))
-	creature.connect("knockback", Callable(self, "knockback"))
-	creature.connect("died", Callable(self, "died"))
-	creature.connect("death_timer_timeout", Callable(self, "game_over"))
+    attack_zone.disabled = true
+    creature.connect("took_damage", Callable(self, "took_damage"))
+    creature.connect("knockback", Callable(self, "knockback"))
+    creature.connect("died", Callable(self, "died"))
+    creature.connect("death_timer_timeout", Callable(self, "game_over"))
 
 func _physics_process(delta: float) -> void:
-	# Add the gravity.
-	if not is_on_floor():
-		velocity += get_gravity() * delta
+    # Add the gravity.
+    if not is_on_floor():
+        velocity += get_gravity() * delta
 
-	if creature.is_alive() and not is_knocked_back:
-		# Handle jump.
-		if Input.is_action_just_pressed("jump") and is_on_floor() and not will_roll and not is_rolling:
-			jump()
+    if creature.is_alive() and not is_knocked_back:
+        # Handle jump.
+        if Input.is_action_just_pressed("jump") and is_on_floor() and not will_roll and not is_rolling:
+            jump()
 
-		if Input.is_action_just_pressed("roll") and is_on_floor():
-			roll()
+        if Input.is_action_just_pressed("roll") and is_on_floor():
+            roll()
 
-		if is_rolling:
-			velocity.x = roll_speed * facing_direction
-		else:
-			# Get the input direction and handle the movement/deceleration.
-			# As good practice, you should replace UI actions with custom gameplay actions.
-			var direction := Input.get_axis("move_left", "move_right")
-			if direction:
-				facing_direction = -1 if direction < 0 else 1
-				velocity.x = direction * speed
-			else:
-				velocity.x = move_toward(velocity.x, 0, speed)
+        if is_rolling:
+            velocity.x = roll_speed * facing_direction
+        else:
+            # Get the input direction and handle the movement/deceleration.
+            # As good practice, you should replace UI actions with custom gameplay actions.
+            var direction := Input.get_axis("move_left", "move_right")
+            if direction:
+                facing_direction = -1 if direction < 0 else 1
+                velocity.x = direction * speed
+            else:
+                velocity.x = move_toward(velocity.x, 0, speed)
 
-	move_and_slide()
+    move_and_slide()
 
 func _process(_delta: float) -> void:
-	play_animation()
+    play_animation()
 
 func jump() -> void:
-	velocity.y = jump_velocity
-	jump_sound.pitch_scale = randf_range(0.8, 1.2)
-	jump_sound.play()
+    velocity.y = jump_velocity
+    jump_sound.pitch_scale = randf_range(0.8, 1.2)
+    jump_sound.play()
 
 func roll() -> void:
-	will_roll = true
-	animated_sprite.play("roll")
+    will_roll = true
+    animated_sprite.play("roll")
 
 
 func play_animation() -> void:
-	if creature.is_alive() and not is_rolling and not will_roll:
-		if animated_sprite.animation == "hurt" and animated_sprite.is_playing():
-			return
-		var direction = velocity.x
-		animated_sprite.flip_h = facing_direction == -1
-		
-		if is_on_floor():
-			if direction:
-				animated_sprite.play("walk")
-			else:
-				animated_sprite.play("idle")
-		else:
-			animated_sprite.play("jump")
+    if creature.is_alive() and not is_rolling and not will_roll:
+        if animated_sprite.animation == "hurt" and animated_sprite.is_playing():
+            return
+        var direction = velocity.x
+        animated_sprite.flip_h = facing_direction == -1
+        
+        if is_on_floor():
+            if direction:
+                animated_sprite.play("walk")
+            else:
+                animated_sprite.play("idle")
+        else:
+            animated_sprite.play("jump")
 
 func took_damage(_amount: int) -> void:
-	hurt_sound.pitch_scale = randf_range(0.8, 1.2)
-	hurt_sound.play()
-	creature.is_invulnerable = true
+    hurt_sound.pitch_scale = randf_range(0.8, 1.2)
+    hurt_sound.play()
+    creature.is_invulnerable = true
 
 func knockback(source_x: float) -> void:
-	is_knocked_back = true
-	knockback_timer.start()
-	blink_timer.start()
-	if position.x < source_x:
-		velocity.x = -100
-	else:
-		velocity.x = 100
-	velocity.y = -150
+    is_knocked_back = true
+    knockback_timer.start()
+    blink_timer.start()
+    if position.x < source_x:
+        velocity.x = -100
+    else:
+        velocity.x = 100
+    velocity.y = -150
 
 func died() -> void:
-	velocity.x = 0
-	animated_sprite.play("die")
-	Engine.time_scale = 0.5
+    velocity.x = 0
+    animated_sprite.play("die")
+    Engine.time_scale = 0.5
 
 func game_over() -> void:
-	Engine.time_scale = 1
-	get_tree().reload_current_scene()
+    Engine.time_scale = 1
+    get_tree().reload_current_scene()
 
 # Animated Sprite
 func _on_animated_sprite_2d_frame_changed() -> void:
-	if not animated_sprite:
-		return
-	if animated_sprite.animation == "roll" and animated_sprite.frame == 2:
-		will_roll = false
-		is_rolling = true
-		creature.is_invulnerable = true
-	if animated_sprite.animation == "roll" and animated_sprite.frame == 6:
-		is_rolling = false
-		creature.is_invulnerable = false
+    if not animated_sprite:
+        return
+    if animated_sprite.animation == "roll" and animated_sprite.frame == 2:
+        will_roll = false
+        is_rolling = true
+        attack_zone.disabled = false
+        creature.is_invulnerable = true
+    if animated_sprite.animation == "roll" and animated_sprite.frame == 6:
+        is_rolling = false
+        attack_zone.disabled = true
+        creature.is_invulnerable = false
 
 # Timers
 func _on_knockback_timer_timeout() -> void:
-	is_knocked_back = false
-	animated_sprite.modulate.a = 1.0
-	blink_timer.stop()
-	creature.is_invulnerable = false
+    is_knocked_back = false
+    animated_sprite.modulate.a = 1.0
+    blink_timer.stop()
+    creature.is_invulnerable = false
 
 func _on_blink_timer_timeout() -> void:
-	if animated_sprite.modulate.a == 1.0:
-		animated_sprite.modulate.a = 0.3
-	else:
-		animated_sprite.modulate.a = 1.0
+    if animated_sprite.modulate.a == 1.0:
+        animated_sprite.modulate.a = 0.3
+    else:
+        animated_sprite.modulate.a = 1.0

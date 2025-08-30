@@ -1,8 +1,44 @@
-[gd_scene load_steps=10 format=3 uid="uid://dljwmey2r0foi"]
+[gd_scene load_steps=20 format=3 uid="uid://dljwmey2r0foi"]
 
 [ext_resource type="Script" uid="uid://cqp5c78ognyr6" path="res://scripts/slime.gd" id="1_n6pvg"]
 [ext_resource type="Texture2D" uid="uid://b53oiw3erqii0" path="res://assets/sprites/slime_green.png" id="1_p2gj0"]
 [ext_resource type="PackedScene" uid="uid://na76a8io1gcu" path="res://scenes/danger_zone.tscn" id="2_n6pvg"]
+[ext_resource type="PackedScene" uid="uid://cdyohpki03rl8" path="res://scenes/creature.tscn" id="2_pjw23"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_pjw23"]
+size = Vector2(12, 12)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a02ik"]
+atlas = ExtResource("1_p2gj0")
+region = Rect2(72, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pu8ps"]
+atlas = ExtResource("1_p2gj0")
+region = Rect2(48, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_g40cl"]
+atlas = ExtResource("1_p2gj0")
+region = Rect2(24, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cxm07"]
+atlas = ExtResource("1_p2gj0")
+region = Rect2(0, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_v5wyi"]
+atlas = ExtResource("1_p2gj0")
+region = Rect2(0, 48, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0l8pv"]
+atlas = ExtResource("1_p2gj0")
+region = Rect2(24, 48, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vnioy"]
+atlas = ExtResource("1_p2gj0")
+region = Rect2(48, 48, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2xjuo"]
+atlas = ExtResource("1_p2gj0")
+region = Rect2(72, 48, 24, 24)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_pjw23"]
 atlas = ExtResource("1_p2gj0")
@@ -24,6 +60,40 @@ region = Rect2(72, 24, 24, 24)
 animations = [{
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_a02ik")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pu8ps")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_g40cl")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cxm07")
+}],
+"loop": false,
+"name": &"die",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_v5wyi")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0l8pv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vnioy")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2xjuo")
+}],
+"loop": false,
+"name": &"hurt",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_pjw23")
 }, {
 "duration": 1.0,
@@ -43,20 +113,33 @@ animations = [{
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0l8pv"]
 size = Vector2(12, 12)
 
-[node name="Slime" type="Node2D"]
+[node name="Slime" type="Area2D" groups=["enemies"]]
+collision_layer = 7
+collision_mask = 0
+monitoring = false
 script = ExtResource("1_n6pvg")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+[node name="Creature" parent="." instance=ExtResource("2_pjw23")]
+max_hp = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
+position = Vector2(0, -6)
+shape = SubResource("RectangleShape2D_pjw23")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." groups=["enemies"]]
 position = Vector2(0, -12)
 sprite_frames = SubResource("SpriteFrames_v5wyi")
-animation = &"idle"
+animation = &"die"
 autoplay = "idle"
 
-[node name="DangerZone" parent="." instance=ExtResource("2_n6pvg")]
+[node name="DangerZone" parent="." groups=["enemies"] instance=ExtResource("2_n6pvg")]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DangerZone"]
+visible = false
 position = Vector2(0, -6)
 shape = SubResource("RectangleShape2D_0l8pv")
+debug_color = Color(0.840671, 0.316046, 0.561287, 0.42)
 
 [node name="RayCastRight" type="RayCast2D" parent="."]
 position = Vector2(0, -6)
@@ -65,3 +148,5 @@ target_position = Vector2(11, 0)
 [node name="RayCastLeft" type="RayCast2D" parent="."]
 position = Vector2(0, -6)
 target_position = Vector2(-11, 0)
+
+[connection signal="animation_finished" from="AnimatedSprite2D" to="." method="_on_animated_sprite_2d_animation_finished"]

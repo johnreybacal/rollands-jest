@@ -4,10 +4,31 @@ class_name DangerZone
 @export var kill = false
 @export var damage = 1
 
+var current_group
+var target_group
+
+func _ready() -> void:
+    current_group = get_groups()[0]
+
+    print("initialize dangerzone ", current_group)
+    
+    if current_group.contains("player"):
+        target_group = "enemies"
+    elif current_group.contains("enemies"):
+        target_group = "player"
+
 func _on_body_entered(body: Node2D) -> void:
-    if body.is_in_group("player"):
-        var player = body as Player
-        var creature = player.get_node("Creature") as Creature
+    if body.is_in_group(target_group):
+        var creature = body.get_node("Creature") as Creature
+        if kill:
+            creature.kill()
+        else:
+            creature.take_damage(damage, global_position.x)
+
+
+func _on_area_entered(area: Area2D) -> void:
+    if area.is_in_group(target_group):
+        var creature = area.get_node("Creature") as Creature
         if kill:
             creature.kill()
         else:

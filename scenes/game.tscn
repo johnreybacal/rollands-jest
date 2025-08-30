@@ -255,7 +255,7 @@ limit_bottom = 75
 limit_smoothed = true
 position_smoothing_enabled = true
 
-[node name="Killzone" parent="." instance=ExtResource("4_iywne")]
+[node name="Killzone" parent="." groups=["enemies"] instance=ExtResource("4_iywne")]
 position = Vector2(0, 50)
 kill = true
 

@@ -1,10 +1,11 @@
-[gd_scene load_steps=45 format=3 uid="uid://dxktax46omecp"]
+[gd_scene load_steps=47 format=3 uid="uid://dxktax46omecp"]
 
 [ext_resource type="Texture2D" uid="uid://ccha8fwixh2la" path="res://assets/sprites/knight.png" id="1_3vyb7"]
 [ext_resource type="Script" uid="uid://bwkq263wq0ix7" path="res://scripts/player.gd" id="1_g2els"]
 [ext_resource type="PackedScene" uid="uid://cdyohpki03rl8" path="res://scenes/creature.tscn" id="2_qlg0r"]
 [ext_resource type="AudioStream" uid="uid://3x1ta5duqd0e" path="res://assets/sounds/hurt.wav" id="3_qhqgy"]
 [ext_resource type="AudioStream" uid="uid://oqjjwbr2knn3" path="res://assets/sounds/jump.wav" id="4_dqkch"]
+[ext_resource type="PackedScene" uid="uid://na76a8io1gcu" path="res://scenes/danger_zone.tscn" id="4_tuyoq"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_4ni07"]
 atlas = ExtResource("1_3vyb7")
@@ -301,12 +302,14 @@ animations = [{
 [sub_resource type="CircleShape2D" id="CircleShape2D_fjrip"]
 radius = 5.0
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_tuyoq"]
+radius = 7.0
+
 [node name="Player" type="CharacterBody2D" groups=["player"]]
 z_index = 5
 collision_layer = 2
 script = ExtResource("1_g2els")
 speed = 100.0
-jump_velocity = -275.0
 roll_speed = 150.0
 
 [node name="Creature" parent="." instance=ExtResource("2_qlg0r")]
@@ -323,6 +326,13 @@ frame_progress = 1.0
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, -5)
 shape = SubResource("CircleShape2D_fjrip")
+
+[node name="DangerZone" parent="." groups=["player"] instance=ExtResource("4_tuyoq")]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DangerZone"]
+position = Vector2(0, -7)
+shape = SubResource("CircleShape2D_tuyoq")
+debug_color = Color(0.782695, 0.408899, 0.405542, 0.42)
 
 [node name="Sounds" type="Node" parent="."]
 

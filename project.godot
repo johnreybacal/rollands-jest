@@ -25,6 +25,7 @@ project/assembly_name="first game"
 
 [global_group]
 
+enemies=""
 player=""
 
 [input]
