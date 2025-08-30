@@ -9,6 +9,6 @@ func _on_body_entered(body: Node2D) -> void:
         var player = body as Player
         var creature = player.get_node("Creature") as Creature
         if kill:
-            creature.die()
+            creature.kill()
         else:
             creature.take_damage(damage, global_position.x)
