@@ -1,0 +1,42 @@
+## Godot-specific
+# Import metadata (re-generated)
+*.import
+*.md5
+
+# Godot 4 .godot/ cache directory
+.godot/
+
+# Mono-specific (if using C#)
+.mono/
+data_*/
+
+## OS / Editor junk
+Thumbs.db
+Desktop.ini
+ehthumbs.db
+.DS_Store
+*.swp
+*.tmp
+~$*
+
+## Build / export artifacts
+export_presets.cfg # optional to ignore if it contains local paths; comment out if you want to version it
+*.exe
+*.apk
+*.aab
+*.pck
+*.zip
+*.tar.gz
+*.dmg
+*.app
+
+## Logs
+logs/
+*.log
+
+## User / local settings
+.vscode/
+*.uid
+
+# Keep project.godot (do NOT ignore)
+# Keep assets source files (png, wav, tscn, gd, etc.)
