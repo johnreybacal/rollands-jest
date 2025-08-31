@@ -19,10 +19,10 @@ var is_rolling = false
 
 func _ready() -> void:
     attack_zone.disabled = true
-    creature.connect("took_damage", Callable(self, "took_damage"))
-    creature.connect("knockback", Callable(self, "knockback"))
-    creature.connect("died", Callable(self, "died"))
-    creature.connect("death_timer_timeout", Callable(self, "game_over"))
+    creature.took_damage.connect(took_damage)
+    creature.knockback.connect(knockback)
+    creature.died.connect(died)
+    creature.death_timer_timeout.connect(game_over)
 
 func _physics_process(delta: float) -> void:
     # Add the gravity.

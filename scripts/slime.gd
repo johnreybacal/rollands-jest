@@ -13,9 +13,9 @@ var is_moving = true
 @onready var danger_zone: DangerZone = $DangerZone
 
 func _ready() -> void:
-    creature.connect("took_damage", Callable(self, "took_damage"))
-    creature.connect("died", Callable(self, "died"))
-    creature.connect("death_timer_timeout", Callable(self, "_on_death_timer_timeout"))
+    creature.took_damage.connect(took_damage)
+    creature.died.connect(died)
+    creature.death_timer_timeout.connect(_on_death_timer_timeout)
 
 func _process(delta: float) -> void:
     if ray_cast_right.is_colliding():
