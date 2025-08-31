@@ -13,6 +13,7 @@ var is_rolling = false
 @onready var creature: Creature = $Creature
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var jump_sound: AudioStreamPlayer2D = $Sounds/JumpSound
+@onready var roll_sound: AudioStreamPlayer2D = $Sounds/RollSound
 @onready var knockback_timer: Timer = $Timers/KnockbackTimer
 @onready var blink_timer: Timer = $Timers/BlinkTimer
 @onready var attack_zone: CollisionShape2D = $DangerZone/CollisionShape2D
@@ -118,6 +119,8 @@ func _on_animated_sprite_2d_frame_changed() -> void:
         is_rolling = true
         attack_zone.disabled = false
         creature.is_invulnerable = true
+        roll_sound.pitch_scale = randf_range(0.8, 1.2)
+        roll_sound.play()
     if animated_sprite.animation == "roll" and animated_sprite.frame == 6:
         is_rolling = false
         attack_zone.disabled = true
