@@ -7,6 +7,7 @@ class_name Creature
 
 signal died()
 signal death_timer_timeout()
+signal health_changed(hp: int)
 signal took_damage(amount: int)
 signal knockback(source_x: int)
 
@@ -30,6 +31,7 @@ func take_damage(amount: int, source_x: float) -> void:
         hurt_sound.play()
         emit_signal("took_damage", amount)
         hp -= amount
+        emit_signal("health_changed", hp)
         emit_signal("knockback", source_x)
 
         if hp <= 0:
@@ -39,6 +41,7 @@ func take_damage(amount: int, source_x: float) -> void:
 func kill() -> void:
     if is_alive():
         hp = 0
+        emit_signal("health_changed", hp)
         emit_signal("died")
         death_timer.start()
 

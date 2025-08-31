@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://bdbgnncpfngh2"]
+
+[ext_resource type="Script" uid="uid://cub6jkiwpu3a5" path="res://scripts/heart.gd" id="1_ycbwg"]
+[ext_resource type="Texture2D" uid="uid://bd3wwy7wepyo7" path="res://assets/sprites/hearts.png" id="2_ycbwg"]
+
+[node name="Heart" type="Node2D"]
+script = ExtResource("1_ycbwg")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_ycbwg")
+hframes = 3
