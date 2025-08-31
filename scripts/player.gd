@@ -65,11 +65,18 @@ func roll() -> void:
 
 
 func play_animation() -> void:
-    if creature.is_alive() and not is_rolling and not will_roll:
+    if creature.is_alive():
+        # Don't change animation / Don't turn
         if animated_sprite.animation == "hurt" and animated_sprite.is_playing():
             return
+
+        # Turn
         var direction = velocity.x
         animated_sprite.flip_h = facing_direction == -1
+
+        # Don't change
+        if will_roll or is_rolling:
+            return
         
         if is_on_floor():
             if direction:
