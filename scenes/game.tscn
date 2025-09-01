@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=4 uid="uid://w02gc015cluj"]
+[gd_scene load_steps=16 format=4 uid="uid://w02gc015cluj"]
 
 [ext_resource type="Script" uid="uid://tuuxs0imrexx" path="res://scripts/game_manager.gd" id="1_gee14"]
 [ext_resource type="PackedScene" uid="uid://dxktax46omecp" path="res://scenes/player.tscn" id="1_uwrxv"]
@@ -215,6 +215,9 @@ _data = {
 &"move": SubResource("Animation_lnu2h")
 }
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_gee14"]
+size = Vector2(15, 15)
+
 [node name="Game" type="Node2D"]
 
 [node name="GameManager" type="Node" parent="." node_paths=PackedStringArray("hud")]
@@ -303,3 +306,15 @@ autoplay = "move"
 
 [node name="Slime2" parent="." instance=ExtResource("6_p57ef")]
 position = Vector2(552, 0)
+
+[node name="Area2D" type="Area2D" parent="."]
+position = Vector2(-40, -8)
+collision_layer = 4
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("RectangleShape2D_gee14")
+debug_color = Color(0.756708, 0.39733, 0.586309, 0.42)
+
+[node name="Slime" parent="." instance=ExtResource("6_p57ef")]
+position = Vector2(-15, 0)
